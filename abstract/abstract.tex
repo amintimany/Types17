@@ -4,6 +4,7 @@
 \usepackage{todonotes}
 \usepackage{mathpartir, pftools}
 \usepackage{qsymbols}
+\usepackage{natbib}
 
 \title{Cumulative inductive types in Coq}
 
@@ -54,7 +55,7 @@
 \titlerunning{Cumulative inductive types in Coq}
 
 \newcommand{\Type}[1]{{\color{red} \mathtt{Type}}_{#1}}
-
+\newcommand{\Set}{{\color{red} \mathtt{Set}}}
 \begin{document}
 
 \maketitle
@@ -62,7 +63,7 @@
 In order to avoid well-know paradoxes associated with self-referential
 definitions higher-order dependent type theories usually use a
 countably infinite hierarchy of universes (also known as sorts),
-$\Type{0} : \Type{1} : \cdots$. Such type systems are called
+$\Set = \Type{0} : \Type{1} : \cdots$. Such type systems are called
 cumulative if for any type $T$ we have that $T : \Type{i}$ implies
 $T : \Type{i+1}$. Predicative calculus of inductive constructions
 (pCIC), the underlying logic of the Coq proof assistant is one such
@@ -146,19 +147,17 @@ whenever $\mathtt{i \leq i'}$ and $\mathtt{j \leq j'}$.
 
 
 \def\vec#1{\overset{\rightarrow}{#1}}
-
-
-
-- describe the system (just one additional inference rule)
-
+\def\clist{\texttt{list}}
+\def\nat{\texttt{nat}}
+\def\ulist#1{\texttt{list@\{}#1\texttt{\}}}
 \subsection*{Template Polymorphism}
 
-Before the work of \cite{SozeauT14} on adding full universe polymorphism
-to Coq, the system enjoyed a restricted form of polymorphism for
-inductive types, which we coined template polymorphism. The idea is to
-give more precise types to applications of inductive types to their
-parameters, so that e.g. the inferred type of \texttt{list nat} is
-$\Type{0}$ instead of $\Type{i}$ for a global type level $i$.
+Before the addition of full universe polymorphism to Coq, the system
+enjoyed a restricted form of polymorphism for inductive types, which was
+since coined template polymorphism. The idea is to give more precise
+types to applications of inductive types to their parameters, so that
+e.g. the inferred type of \texttt{list nat} is $\Type{0}$ instead of
+$\Type{i}$ for a global type level $i$.
 
 Technically, consider an inductive type $I$ of arity
 $\forall \vec{P}, \vec{A} "->" s$ where $\vec{P}$ are parameters and
@@ -169,11 +168,22 @@ application of $I$ to parameters $\vec{p}$, we compute its type as
 $\forall \vec{A} "->" s[l'/l]$ where $p_n : \Type{l'}$, i.e using the
 actual inferred types of the parameters.
 
+This extension allows to naturally identify $\clist (\nat : \Set)$ and
+$\clist (\nat : \Type{1})$ by convertibility, whereas with full universe
+polymorphism when comparing to $\ulist{\Set}~(\nat : \Set)$ and
+$\ulist{i}~ (\nat : \Type{1})$ with $\Set < i$ we would fail as equating
+$i$ and $\Set$ is forbidden. With our new rule, this conversion will be
+validated as these two $\texttt{list}$ instances become convertible.
+Indeed, convertibility on inductive applications will now be defined as
+cumulativity in both directions and in this case $\ulist{i}$
+cumulativity imposes no constraint on its universe variable. This change
+will allow a complete compatibility when moving inductive definitions
+from the template polymorphic treatment to the new one.
 
 \subsection*{Motivating examples}
 
 - example of complete + small => preorder, show how lifting + rule for
-cumulativity explain the impossibility of applying this to Types@{i}.
+cumulativity explain the impossibility of applying this to $Types@{i}$.
 
 \subsection*{Consistency and Strong Normalization}
 - idea of the consistency proof using Werner \& Lee's model
