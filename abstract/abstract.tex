@@ -1,5 +1,9 @@
 \documentclass{easychair}
 \usepackage{color}
+\usepackage{lstcoq}
+\usepackage{todonotes}
+\usepackage{mathpartir, pftools}
+
 \title{Cumulative inductive types in Coq}
 
 % Authors are joined by \and. Their affiliations are given by \inst, which indexes
@@ -59,11 +63,59 @@ definitions higher-order dependent type theories usually use a
 countably infinite hierarchy of universes (also known as sorts),
 $\Type{0} : \Type{1} : \cdots$. Such type systems are called
 cumulative if for any type $T$ we have that $T : \Type{i}$ implies
-$T : \Type{i+1}$. Calculus of inductive constructions (CIC), the
-underlying logic of the Coq proof assistant is one such system.
+$T : \Type{i+1}$. Predicative calculus of inductive constructions
+(pCIC), the underlying logic of the Coq proof assistant is one such
+system.\todo{cite pCIC paper!?}
 
 Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
-in Coq allows definitions to by polymorphic in universe levels.
+in Coq allows constructions to by polymorphic in universe levels.  The
+quintessential universe polymorphic construction is the polymorphic definition of
+categories:
+\Coqe|Record Category$_{\mathtt{i, j}}$ := {Obj : $\Type{\mathtt{i}}$; Hom : Obj -> Obj -> $\Type{\mathtt{j}}$; $\cdots$}|.\footnotemark{}
+\footnotetext{Records in Coq are syntactic sugar for an inductive type
+with a single constructor.}
+
+However, pCIC does not extend the subtyping relation (induced by
+cumulativity) to inductive types. As a result there is no subtyping
+relation between instances of a universe polymorphic inductive type.
+That is for a category \Coqe|C|, having both
+\Coqe|C : Category$_{\mathtt{i, j}}$| and \Coqe|C : Category$_{\mathtt{i', j'}}$|
+is only possible if $\mathtt{i = i'}$ and $\mathtt{j = j'}$.
+\todo[inline]{should we elaborate a bit that we want subtyping for categories because smallness/largeness!?}
+
+In previous work Timany et al. \cite{DBLP:conf/ictac/Timany015} extend
+pCIC to pCuIC (predicative Calculus of Cumulative Inductive
+Constructions). This is essentially the system pCIC with a single
+subtyping added to it:
+\[
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \overset{\rightarrow}{x} : \overset{\rightarrow}{N}.~s)\{
+\Pi\overset{\rightarrow}{x_1} : \overset{\rightarrow}{M_1}.
+~X~\overset{\rightarrow}{m_1},\dots,\Pi \overset{\rightarrow}{x_n} :
+\overset{\rightarrow}{M_n}.~X~\overset{\rightarrow}{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \overset{\rightarrow}{x} : \overset{\rightarrow}{N'}.~s')\{
+\Pi \overset{\rightarrow}{x_1} : \overset{\rightarrow}{M_1'}.~
+X~\overset{\rightarrow}{m_1'},\dots,\Pi \overset{\rightarrow}{x_n} :
+\overset{\rightarrow}{M_n'}.~X~\overset{\rightarrow}{m_n'}\})\\\
+\and
+s \preceq s'
+\and
+\forall i.~ N_i \preceq {N'}_i
+\and
+\forall i,j.~ (M_i)_j \preceq (M_i')_j\\\
+\and
+length(\overset{\rightarrow}{m}) = length(\overset{\rightarrow}{x})
+\and
+\forall i.~X~\overset{\rightarrow}{m_i} \simeq X~ \overset{\rightarrow}{m_i'}
+}{
+I~\overset{\rightarrow}{m}
+\preceq
+I'~\overset{\rightarrow}{m}
+}
+\]
 
 
 - describe the system (just one additional inference rule)
@@ -84,4 +136,5 @@ The text
 \end{document}
 
 
-%  LocalWords:  cumulativity polymorphism Coq CIC
+%  LocalWords:  cumulativity polymorphism Coq pCIC subtyping Timany
+%  LocalWords:  pCuIC
