@@ -3,6 +3,7 @@
 \usepackage{lstcoq}
 \usepackage{todonotes}
 \usepackage{mathpartir, pftools}
+\usepackage{qsymbols}
 
 \title{Cumulative inductive types in Coq}
 
@@ -68,7 +69,7 @@ $T : \Type{i+1}$. Predicative calculus of inductive constructions
 system.\todo{cite pCIC paper!?}
 
 Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
-in Coq allows constructions to by polymorphic in universe levels.  The
+in Coq allows constructions to be polymorphic in universe levels.  The
 quintessential universe polymorphic construction is the polymorphic definition of
 categories:
 \Coqe|Record Category$_{\mathtt{i, j}}$ := {Obj : $\Type{\mathtt{i}}$; Hom : Obj -> Obj -> $\Type{\mathtt{j}}$; $\cdots$}|.\footnotemark{}
@@ -144,19 +145,40 @@ we can derive
 whenever $\mathtt{i \leq i'}$ and $\mathtt{j \leq j'}$.
 
 
+\def\vec#1{\overset{\rightarrow}{#1}}
+
+
 
 - describe the system (just one additional inference rule)
 
-- explain template polymorphism ``semantics'' (MS)
+\subsection*{Template Polymorphism}
+
+Before the work of \cite{SozeauT14} on adding full universe polymorphism
+to Coq, the system enjoyed a restricted form of polymorphism for
+inductive types, which we coined template polymorphism. The idea is to
+give more precise types to applications of inductive types to their
+parameters, so that e.g. the inferred type of \texttt{list nat} is
+$\Type{0}$ instead of $\Type{i}$ for a global type level $i$.
+
+Technically, consider an inductive type $I$ of arity
+$\forall \vec{P}, \vec{A} "->" s$ where $\vec{P}$ are parameters and
+$\vec{A}$ the indices.  When the type of the $n$-th parameter is
+$\Type{l}$ for some level $l$ and $l$ occurs in the sort $s$, the
+inductive is made parametric on $l$. When we infer the type of an
+application of $I$ to parameters $\vec{p}$, we compute its type as
+$\forall \vec{A} "->" s[l'/l]$ where $p_n : \Type{l'}$, i.e using the
+actual inferred types of the parameters.
+
+
+\subsection*{Motivating examples}
 
 - example of complete + small => preorder, show how lifting + rule for
 cumulativity explain the impossibility of applying this to Types@{i}.
 
+\subsection*{Consistency and Strong Normalization}
 - idea of the consistency proof using Werner \& Lee's model
 
 - for SN, ???
-
-The text
 
 \bibliographystyle{plain}
 \bibliography{bib}
