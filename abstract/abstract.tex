@@ -1,6 +1,6 @@
 \documentclass{easychair}
 
-\title{Cumulative inductive types in CIC (Coq)}
+\title{Cumulative inductive types in Coq}
 
 % Authors are joined by \and. Their affiliations are given by \inst, which indexes
 % into the list defined using \institute
@@ -46,15 +46,26 @@
 % version for the running heads. When processed by
 % EasyChair, this command is mandatory: a document without \titlerunning
 % will be rejected by EasyChair
-\titlerunning{Cumulative inductive types in CIC (Coq)}
+\titlerunning{Cumulative inductive types in Coq}
+
+\newcommand{\Type}[1]{{\color{red} \mathtt{Type}}_{#1}}
 
 \begin{document}
 
 \maketitle
 
-\begin{abstract}
-The abstract
-\end{abstract}
+In order to avoid well-know paradoxes associated with self-referential
+definitions higher-order dependent type theories usually use a
+countably infinite hierarchy of universes (also known as sorts),
+$\Type{0} : \Type{1} : \cdots$. Such type systems are called
+cumulative if for any type $T$ we have that $T : \Type{i}$ implies
+$T : \Type{i+1}$. Calculus of inductive constructions (CIC), the
+underlying logic of the Coq proof assistant is one such system.
+
+Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
+in Coq allows definitions to by polymorphic in universe levels.
+
+
 - describe the system (just one additional inference rule)
 
 - explain template polymorphism ``semantics'' (MS)
@@ -62,8 +73,9 @@ The abstract
 - example of complete + small => preorder, show how lifting + rule for
 cumulativity explain the impossibility of applying this to Types@{i}.
 
-
-The text
-
+\bibliographystyle{plain}
+\bibliography{bib}
 \end{document}
 
+
+%  LocalWords:  cumulativity polymorphism Coq CIC
