@@ -87,19 +87,19 @@ In previous work Timany et al. \cite{DBLP:conf/ictac/Timany015} extend
 pCIC to pCuIC (predicative Calculus of Cumulative Inductive
 Constructions). This is essentially the system pCIC with a single
 subtyping added to it:
-\[
+\begin{mathpar}
 \inferH{C-Ind}{
 I \equiv (\mathsf{Ind}
-(X : \Pi \overset{\rightarrow}{x} : \overset{\rightarrow}{N}.~s)\{
-\Pi\overset{\rightarrow}{x_1} : \overset{\rightarrow}{M_1}.
-~X~\overset{\rightarrow}{m_1},\dots,\Pi \overset{\rightarrow}{x_n} :
-\overset{\rightarrow}{M_n}.~X~\overset{\rightarrow}{m_n}\})\\\
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
 \and
 I' \equiv (\mathsf{Ind}
-(X : \Pi \overset{\rightarrow}{x} : \overset{\rightarrow}{N'}.~s')\{
-\Pi \overset{\rightarrow}{x_1} : \overset{\rightarrow}{M_1'}.~
-X~\overset{\rightarrow}{m_1'},\dots,\Pi \overset{\rightarrow}{x_n} :
-\overset{\rightarrow}{M_n'}.~X~\overset{\rightarrow}{m_n'}\})\\\
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
 \and
 s \preceq s'
 \and
@@ -107,15 +107,42 @@ s \preceq s'
 \and
 \forall i,j.~ (M_i)_j \preceq (M_i')_j\\\
 \and
-length(\overset{\rightarrow}{m}) = length(\overset{\rightarrow}{x})
+length(\vec{m}) = length(\vec{x})
 \and
-\forall i.~X~\overset{\rightarrow}{m_i} \simeq X~ \overset{\rightarrow}{m_i'}
+\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}
 }{
-I~\overset{\rightarrow}{m}
+I~\vec{m}
 \preceq
-I'~\overset{\rightarrow}{m}
+I'~\vec{m}
 }
-\]
+\end{mathpar}
+The two terms $I$ and $I'$ are two inductive definitions (type
+constructors\footnote{Not to be confused with constructors of
+  inductive types}) with indexes with types $\vec{N}$ and $\vec{N'}$
+respectively. They are respectively in sorts (universes) $s$ and $s'$.
+They each have $n$ constructor with $i$\textsuperscript{th}
+constructors are of the type $\Pi\vec{x_i} : \vec{M_i}.~X~\vec{m_i}$
+and $\Pi\vec{x_i} : \vec{M_i'}.~X~\vec{m_i'}$ for $I$ and $I'$
+respectively. With this out of the way, the reading of the rule
+\ref{C-Ind} is now straightforward. The type $I~\vec{m}$ is a subtype
+of the type $I'~\vec{m}$ if the corresponding arguments of
+corresponding constructors in $I$ are sub types of those of $I'$.  In
+other words, if the terms $\vec{v}$ can be applied to the
+$i$\textsuperscript{th} of $I$ to construct a term of type $I~\vec{m}$
+then the same terms $\vec{v}$ can be applied to the corresponding
+constructor of $I'$ to construct a term of type $I'~\vec{m}$.  Notice
+in \ref{C-Ind} the indexes of the compared inductive types $\vec{m}$
+do not appear anywhere above the line. Indeed the particular instance
+of the inductive type is not important when comparing two (dependent)
+inductive types. The terms $\vec{m}$ are added because subtyping of
+inductive types allows only the comparison of two fully applied type
+constructors, i.e., two types.
+
+Using the rule \ref{C-Ind} above (in presence of universe polymorphism)
+we can derive
+\Coqe|Category$_{\mathtt{i, j}}$| $\preceq$ \Coqe|Category$_{\mathtt{i', j'}}$|
+whenever $\mathtt{i \leq i'}$ and $\mathtt{j \leq j'}$.
+
 
 
 - describe the system (just one additional inference rule)
@@ -137,4 +164,4 @@ The text
 
 
 %  LocalWords:  cumulativity polymorphism Coq pCIC subtyping Timany
-%  LocalWords:  pCuIC
+%  LocalWords:  pCuIC subtype
