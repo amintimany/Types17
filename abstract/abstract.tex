@@ -130,14 +130,13 @@ corresponding constructors in $I$ are sub types of those of $I'$.  In
 other words, if the terms $\vec{v}$ can be applied to the
 $i$\textsuperscript{th} of $I$ to construct a term of type $I~\vec{m}$
 then the same terms $\vec{v}$ can be applied to the corresponding
-constructor of $I'$ to construct a term of type $I'~\vec{m}$.  Notice
-in \ref{C-Ind} the indexes of the compared inductive types $\vec{m}$
-do not appear anywhere above the line. Indeed the particular instance
-of the inductive type is not important when comparing two (dependent)
-inductive types. The terms $\vec{m}$ are added because subtyping of
-inductive types allows only the comparison of two fully applied type
-constructors, i.e., two types.
-
+constructor of $I'$ to construct a term of type $I'~\vec{m}$.  % Notice
+% in \ref{C-Ind} the indexes of the compared inductive types $\vec{m}$
+% do not appear anywhere above the line. Indeed the particular instance
+% of the inductive type is not important when comparing two (dependent)
+% inductive types. The terms $\vec{m}$ are added because subtyping of
+% inductive types allows only the comparison of two fully applied type
+% constructors, i.e., two types.
 Using the rule \ref{C-Ind} above (in presence of universe polymorphism)
 we can derive
 \Coqe|Category$_{\mathtt{i, j}}$| $\preceq$ \Coqe|Category$_{\mathtt{i', j'}}$|
@@ -166,9 +165,9 @@ $\forall \vec{A} "->" s[l'/l]$ where $p_n : \Type{l'}$, i.e using the
 actual inferred types of the parameters.
 
 This extension allows to naturally identify $\clist (\nat : \Set)$ and
-$\clist (\nat : \Type{1})$ by convertibility, whereas with full universe
+$\clist (\nat : \Type{i})$ by convertibility, whereas with full universe
 polymorphism when comparing to $\ulist{\Set}~(\nat : \Set)$ and
-$\ulist{i}~ (\nat : \Type{1})$ with $\Set < i$ we would fail as equating
+$\ulist{i}~ (\nat : \Type{i})$ with $\Set < i$ we would fail as equating
 $i$ and $\Set$ is forbidden. With our new rule, this conversion will be
 validated as these two $\texttt{list}$ instances become convertible.
 Indeed, convertibility on inductive applications will now be defined as
@@ -179,25 +178,22 @@ from the template polymorphic treatment to the new one.
 
 \paragraph{Motivating examples}
 The category theory library by Timany et
-al. \cite{DBLP:conf/rta/Timany016} the authors prove a well-known
-theorem in Coq that states that any small and complete category is a
-preorder category.  In loc. cit. (relative) smallness and largeness of
-constructions is represented through universe levels and therefore
-never explicitly mentioned.  Indeed universe constraints inferred by
-Coq for this theorem reflect the smallness criterion. This theorem
-would only apply to a category \Coqe|C : Category$_{\mathtt{i, j}}$|
-only if $\mathtt{j \le i}$. This means it would not apply to the
-category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types at
-level $\mathtt{i}$ (and functions between them) which is clearly
-complete but not small.
-In a system with the rule \ref{C-Ind} the category of types is also
-\Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| where $\mathtt{i < k}$,
-$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, constraints
-generated for subtyping of the proof of completeness would not allow
-for the proof of completeness of \Coqe|Types@{i}| to be lifted as
-required. Intuitively, this is due to the fact that then
-\Coqe|Types@{i}| would require to have limits of all functors from
-possibly larger categories.
+al. \cite{DBLP:conf/rta/Timany016} represents (relative) smallness and
+largeness of categories through universe levels. Smallness and
+largeness side-conditions for constructions is inferred by the kernel
+of Coq. In loc. cit. the authors prove a well-known theorem stating
+that any small and complete category is a preorder category. Coq
+infers that this theorem would only apply to a category
+\Coqe|C : Category$_{\mathtt{i, j}}$| only if $\mathtt{j \le i}$ and thus not to
+the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of
+types at level $\mathtt{i}$ (and functions between them) which is
+complete but not small.  In a system with the rule \ref{C-Ind} we have
+\Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| for $\mathtt{i < k}$,
+$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping of the
+notion completeness would not allow for the proof of completeness of
+\Coqe|Types@{i}| to be lifted as required. Intuitively, that would
+require the category to have limits of all functors from possibly larger
+categories.
 
 \paragraph{Consistency and Strong Normalization}
 The model constructed for pCIC by Lee et
@@ -221,9 +217,9 @@ two fresh instances of it (with two different sets of universe
 variables) to compute the set of constraints necessary for subtyping
 relation for different instances of that inductive type. Subsequent
 comparisons during type checking/inference will use these constraints.
-It is our plan to implement the use of this rule in Coq and
-accordingly eliminate the template polymorphism mechanism from Coq.
-These new features are planed to be part of the next major release of
+It is our plan to implement the rule \ref{C-Ind} in Coq and
+accordingly eliminate the template polymorphism mechanism.
+These new features are planed as part of the next major release of
 the Coq proof assistant (Coq 8.7).
 
 \setlength{\bibsep}{0pt} % or use whatever dimension you want
