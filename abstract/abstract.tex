@@ -81,12 +81,12 @@ countably infinite hierarchy of universes (also known as sorts),
 $\Set = \Type{0} : \Type{1} : \cdots$. Such type systems are called
 cumulative if for any type $T$ we have that $T : \Type{i}$ implies
 $T : \Type{i+1}$. The predicative calculus of inductive constructions
-(pCIC) \cite{coq, DBLP:journals/corr/abs-1111-0123} at the basis of the Coq proof assistant is one such
+(pCIC) \cite{coq, DBLP:journals/corr/abs-1111-0123} at the basis of the Coq proof assistant, is one such
 system.
 
-Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
+Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe-polymorphism
 in Coq allows constructions to be polymorphic in universe levels.  The
-quintessential universe polymorphic construction is the polymorphic definition of
+quintessential universe-polymorphic construction is the polymorphic definition of
 categories:
 \Coqe|Record Category$_{\mathtt{i, j}}$ := {Obj : $\Type{\mathtt{i}}$; Hom : Obj -> Obj -> $\Type{\mathtt{j}}$; $\cdots$}|.\footnotemark{}
 \footnotetext{Records in Coq are syntactic sugar for an inductive type
@@ -95,7 +95,7 @@ with a single constructor.}
 However, pCIC does not extend the subtyping relation (induced by
 cumulativity) to inductive types. As a result there is no subtyping
 relation between instances of a universe polymorphic inductive type.
-That is for a category \Coqe|C|, having both
+That is, for a category \Coqe|C|, having both
 \Coqe|C : Category$_{\mathtt{i, j}}$| and \Coqe|C : Category$_{\mathtt{i', j'}}$|
 is only possible if $\mathtt{i = i'}$ and $\mathtt{j = j'}$.
 In previous work Timany et al. \cite{DBLP:conf/ictac/Timany015} extend
@@ -140,10 +140,10 @@ constructor being of type $\Pi\vec{x_i} : \vec{M_i}.~X~\vec{m_i}$
 and $\Pi\vec{x_i} : \vec{M_i'}.~X~\vec{m_i'}$ for $I$ and $I'$
 respectively. With this out of the way, the reading of the rule
 \ref{C-Ind} is now straightforward. The type $I~\vec{m}$ is a subtype
-of the type $I'~\vec{m}$ if the corresponding arguments of
+of the type $I'~\vec{m}$ if the corresponding parameters of
 corresponding constructors in $I$ are sub types of those of $I'$.  In
 other words, if the terms $\vec{v}$ can be applied to the
-$i$\textsuperscript{th} of $I$ to construct a term of type $I~\vec{m}$
+$i$\textsuperscript{th} constructor of $I$ to construct a term of type $I~\vec{m}$
 then the same terms $\vec{v}$ can be applied to the corresponding
 constructor of $I'$ to construct a term of type $I'~\vec{m}$.  % Notice
 % in \ref{C-Ind} the indexes of the compared inductive types $\vec{m}$
@@ -152,7 +152,7 @@ constructor of $I'$ to construct a term of type $I'~\vec{m}$.  % Notice
 % inductive types. The terms $\vec{m}$ are added because subtyping of
 % inductive types allows only the comparison of two fully applied type
 % constructors, i.e., two types.
-Using the rule \ref{C-Ind} above (in presence of universe polymorphism)
+Using the rule \ref{C-Ind} above (in the presence of universe polymorphism)
 we can derive
 \Coqe|Category$_{\mathtt{i, j}}$| $\preceq$ \Coqe|Category$_{\mathtt{i', j'}}$|
 whenever $\mathtt{i \le i'}$ and $\mathtt{j \le j'}$.
@@ -160,10 +160,10 @@ whenever $\mathtt{i \le i'}$ and $\mathtt{j \le j'}$.
 The category theory library by Timany et
 al. \cite{DBLP:conf/rta/Timany016} represents (relative) smallness and
 largeness of categories through universe levels. Smallness and largeness
-side-conditions for constructions is inferred by the kernel of Coq. In
+side-conditions for constructions are inferred by the kernel of Coq. In
 loc. cit. the authors prove a well-known theorem stating that any small
 and complete category is a preorder category. Coq infers that this
-theorem can only apply to a category \Coqe|C : Category$_{\mathtt{i,j}}$|
+theorem can apply to a category \Coqe|C : Category$_{\mathtt{i,j}}$|
 if $\mathtt{j \le i}$ and thus not to
 the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types
 at level $\mathtt{i}$ (and functions between them) which is complete but
