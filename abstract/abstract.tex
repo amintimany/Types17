@@ -5,6 +5,12 @@
 \usepackage{mathpartir, pftools}
 \usepackage{qsymbols}
 \usepackage{natbib}
+\usepackage{titlesec}
+
+\titlespacing{\paragraph}{%
+  0pt}{%              left margin
+  0.5\baselineskip}{% space before (vertical)
+  1em}%               space after (horizontal)
 
 \title{Cumulative inductive types in Coq}
 
@@ -210,8 +216,8 @@ the model readily includes all elements of the inductive types including
 those added by the rule \ref{C-Ind}. Hence it is only natural to expect
 (and it is our conjecture that) the same model proves consistency of Coq
 when extended with the rule \ref{C-Ind}.  We are investigating using the
-abstract framework of B. Barras to prove Strong Normalization with this
-extension.
+abstract framework of B. Barras \cite{barass-habil} to prove Strong
+Normalization with this extension.
 
 \paragraph{Implementation}
 The rule \ref{C-Ind} above can be implemented in Coq very efficiently.
@@ -224,7 +230,7 @@ It is our plan to implement the rule \ref{C-Ind} for the next release
 of Coq (Coq 8.7) and accordingly remove support for template
 polymorphism.
 
-\setlength{\bibsep}{0pt} % or use whatever dimension you want
+\setlength{\bibsep}{1pt} % or use whatever dimension you want
 \renewcommand{\bibfont}{\small} % or any other  appropriate font command
 \bibliographystyle{plain}
 \bibliography{bib}
