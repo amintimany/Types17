@@ -151,6 +151,23 @@ we can derive
 \Coqe|Category$_{\mathtt{i, j}}$| $\preceq$ \Coqe|Category$_{\mathtt{i', j'}}$|
 whenever $\mathtt{i \le i'}$ and $\mathtt{j \le j'}$.
 
+The category theory library by Timany et
+al. \cite{DBLP:conf/rta/Timany016} represents (relative) smallness and
+largeness of categories through universe levels. Smallness and largeness
+side-conditions for constructions is inferred by the kernel of Coq. In
+loc. cit. the authors prove a well-known theorem stating that any small
+and complete category is a preorder category. Coq infers that this
+theorem can only apply to a category \Coqe|C : Category$_{\mathtt{i,j}}$|
+if $\mathtt{j \le i}$ and thus not to
+the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types
+at level $\mathtt{i}$ (and functions between them) which is complete but
+not small.  In a system with the rule \ref{C-Ind} we have
+\Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| for $\mathtt{i < k}$,
+$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping would
+not allow for the proof of completeness of \Coqe|Types@{i}| to be lifted
+as required. Intuitively, that would require the category to have limits
+of all functors from possibly larger categories.
+
 \def\vec#1{\overset{\rightarrow}{#1}}
 \def\clist{\texttt{list}}
 \def\nat{\texttt{nat}}
@@ -183,24 +200,6 @@ Indeed, convertibility on inductive applications will now be defined as
 cumulativity in both directions and in this case $\ulist{i}$
 cumulativity imposes no constraint on its universe variable. This change
 will allow a complete compatibility with template polymorphism.
-
-\paragraph{Motivating examples}
-The category theory library by Timany et
-al. \cite{DBLP:conf/rta/Timany016} represents (relative) smallness and
-largeness of categories through universe levels. Smallness and largeness
-side-conditions for constructions is inferred by the kernel of Coq. In
-loc. cit. the authors prove a well-known theorem stating that any small
-and complete category is a preorder category. Coq infers that this
-theorem can only apply to a category \Coqe|C : Category$_{\mathtt{i,j}}$|
-if $\mathtt{j \le i}$ and thus not to
-the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types
-at level $\mathtt{i}$ (and functions between them) which is complete but
-not small.  In a system with the rule \ref{C-Ind} we have
-\Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| for $\mathtt{i < k}$,
-$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping would
-not allow for the proof of completeness of \Coqe|Types@{i}| to be lifted
-as required. Intuitively, that would require the category to have limits
-of all functors from possibly larger categories.
 
 \paragraph{Consistency and Strong Normalization}
 The model constructed for pCIC by Lee et
