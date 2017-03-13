@@ -191,16 +191,16 @@ largeness of categories through universe levels. Smallness and largeness
 side-conditions for constructions is inferred by the kernel of Coq. In
 loc. cit. the authors prove a well-known theorem stating that any small
 and complete category is a preorder category. Coq infers that this
-theorem would only apply to a category
-\Coqe|C : Category$_{\mathtt{i, j}}$| only if $\mathtt{j \le i}$ and thus not to
+theorem can only apply to a category \Coqe|C : Category$_{\mathtt{i,j}}$|
+if $\mathtt{j \le i}$ and thus not to
 the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types
 at level $\mathtt{i}$ (and functions between them) which is complete but
 not small.  In a system with the rule \ref{C-Ind} we have
 \Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| for $\mathtt{i < k}$,
-$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping for the
-would not allow for the proof of completeness of \Coqe|Types@{i}| to be
-lifted as required. Intuitively, that would require the category to have
-limits of all functors from possibly larger categories.
+$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping would
+not allow for the proof of completeness of \Coqe|Types@{i}| to be lifted
+as required. Intuitively, that would require the category to have limits
+of all functors from possibly larger categories.
 
 \paragraph{Consistency and Strong Normalization}
 The model constructed for pCIC by Lee et
