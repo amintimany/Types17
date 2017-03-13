@@ -27,9 +27,9 @@ Bart Jacobs\inst{1}
 
 % Institutes for affiliations are also joined by \and,
 \institute{
-imec-Distrinet, KU Leuven, Belgium
+imec-Distrinet, KU Leuven, Belgium, \email{firstname.lastname@cs.kuleuven.be}
 \and
-irif, Inria Paris, France
+Inria Paris \& IRIF, France, \email{matthieu.sozeau@inria.fr}
 %   Concordia University,
 %   Montreal, Quebec, Canada\\
 %   \email{mokhov@cse.concordia.ca}
@@ -70,12 +70,12 @@ Timany, Sozeau, Jacobs
 \maketitle
 
 In order to avoid well-know paradoxes associated with self-referential
-definitions higher-order dependent type theories usually use a
+definitions, higher-order dependent type theories stratify the theory using a
 countably infinite hierarchy of universes (also known as sorts),
 $\Set = \Type{0} : \Type{1} : \cdots$. Such type systems are called
 cumulative if for any type $T$ we have that $T : \Type{i}$ implies
-$T : \Type{i+1}$. Predicative calculus of inductive constructions
-(pCIC) \cite{coq, DBLP:journals/corr/abs-1111-0123}, the underlying logic of the Coq proof assistant is one such
+$T : \Type{i+1}$. The predicative calculus of inductive constructions
+(pCIC) \cite{coq, DBLP:journals/corr/abs-1111-0123} at the basis of the Coq proof assistant is one such
 system.
 
 Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
@@ -127,10 +127,10 @@ I'~\vec{m}
  template polymorphism explained below.}%
 The two terms $I$ and $I'$ are two inductive definitions (type
 constructors\footnote{Not to be confused with constructors of
-  inductive types}) with indexes with types $\vec{N}$ and $\vec{N'}$
+  inductive types}) with indexes of types $\vec{N}$ and $\vec{N'}$
 respectively. They are respectively in sorts (universes) $s$ and $s'$.
-They each have $n$ constructor with $i$\textsuperscript{th}
-constructors are of the type $\Pi\vec{x_i} : \vec{M_i}.~X~\vec{m_i}$
+They each have $n$ constructors, the $i$\textsuperscript{th}
+constructor being of type $\Pi\vec{x_i} : \vec{M_i}.~X~\vec{m_i}$
 and $\Pi\vec{x_i} : \vec{M_i'}.~X~\vec{m_i'}$ for $I$ and $I'$
 respectively. With this out of the way, the reading of the rule
 \ref{C-Ind} is now straightforward. The type $I~\vec{m}$ is a subtype
@@ -159,19 +159,19 @@ whenever $\mathtt{i \le i'}$ and $\mathtt{j \le j'}$.
 
 Before the addition of full universe polymorphism to Coq, the system
 enjoyed a restricted form of polymorphism for inductive types, which was
-since coined template polymorphism. The idea is to give more precise
+since coined template polymorphism. The idea was to give more precise
 types to applications of inductive types to their parameters, so that
 e.g. the inferred type of \texttt{list nat} is $\Type{0}$ instead of
 $\Type{i}$ for a global type level $i$.
 
 Technically, consider an inductive type $I$ of arity
-$\forall \vec{P}, \vec{A} "->" s$ where $\vec{P}$ are parameters and
+$\forall \vec{P}, \vec{A} "->" s$ where $\vec{P}$ are the parameters and
 $\vec{A}$ the indices.  When the type of the $n$-th parameter is
-$\Type{l}$ for some level $l$ and $l$ occurs in the sort $s$, the
-inductive is made parametric on $l$. When we infer the type of an
-application of $I$ to parameters $\vec{p}$, we compute its type as
-$\forall \vec{A} "->" s[l'/l]$ where $p_n : \Type{l'}$, i.e using the
-actual inferred types of the parameters.
+$\Type{l}$ for some level $l$ and $l$ occurs in the sort $s$ (and
+nowhere else), the inductive is made parametric on $l$. When we infer
+the type of an application of $I$ to parameters $\vec{p}$, we compute
+its type as $\forall \vec{A} "->" s[l'/l]$ where $p_n : \Type{l'}$,
+using the actual inferred types of the parameters.
 
 This extension allows to naturally identify $\clist (\nat : \Set)$ and
 $\clist (\nat : \Type{i})$ by convertibility, whereas with full universe
@@ -188,21 +188,20 @@ from the template polymorphic treatment to the new one.
 \paragraph{Motivating examples}
 The category theory library by Timany et
 al. \cite{DBLP:conf/rta/Timany016} represents (relative) smallness and
-largeness of categories through universe levels. Smallness and
-largeness side-conditions for constructions is inferred by the kernel
-of Coq. In loc. cit. the authors prove a well-known theorem stating
-that any small and complete category is a preorder category. Coq
-infers that this theorem would only apply to a category
+largeness of categories through universe levels. Smallness and largeness
+side-conditions for constructions is inferred by the kernel of Coq. In
+loc. cit. the authors prove a well-known theorem stating that any small
+and complete category is a preorder category. Coq infers that this
+theorem would only apply to a category
 \Coqe|C : Category$_{\mathtt{i, j}}$| only if $\mathtt{j \le i}$ and thus not to
-the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of
-types at level $\mathtt{i}$ (and functions between them) which is
-complete but not small.  In a system with the rule \ref{C-Ind} we have
+the category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types
+at level $\mathtt{i}$ (and functions between them) which is complete but
+not small.  In a system with the rule \ref{C-Ind} we have
 \Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| for $\mathtt{i < k}$,
-$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping of the
-notion completeness would not allow for the proof of completeness of
-\Coqe|Types@{i}| to be lifted as required. Intuitively, that would
-require the category to have limits of all functors from possibly larger
-categories.
+$\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, subtyping for the
+would not allow for the proof of completeness of \Coqe|Types@{i}| to be
+lifted as required. Intuitively, that would require the category to have
+limits of all functors from possibly larger categories.
 
 \paragraph{Consistency and Strong Normalization}
 The model constructed for pCIC by Lee et
@@ -222,12 +221,12 @@ extended with the rule \ref{C-Ind}.
 The rule \ref{C-Ind} above can be implemented in Coq very efficiently.
 The idea is that as soon as we define an inductive type, we compare
 two fresh instances of it (with two different sets of universe
-variables) to compute the set of constraints necessary for subtyping
-relation for different instances of that inductive type. Subsequent
+variables) to compute the set of constraints necessary for the subtyping
+relation to hold on different instances of that inductive type. Subsequent
 comparisons during type checking/inference will use these constraints.
 It is our plan to implement the rule \ref{C-Ind} for the next release
-of Coq (Coq 8.7) and accordingly eliminate the template polymorphism
-mechanism.
+of Coq (Coq 8.7) and accordingly remove support for template
+polymorphism.
 
 \setlength{\bibsep}{0pt} % or use whatever dimension you want
 \renewcommand{\bibfont}{\small} % or any other  appropriate font command
