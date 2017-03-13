@@ -66,7 +66,7 @@ countably infinite hierarchy of universes (also known as sorts),
 $\Set = \Type{0} : \Type{1} : \cdots$. Such type systems are called
 cumulative if for any type $T$ we have that $T : \Type{i}$ implies
 $T : \Type{i+1}$. Predicative calculus of inductive constructions
-(pCIC) \cite{coq}, the underlying logic of the Coq proof assistant is one such
+(pCIC) \cite{coq, DBLP:journals/corr/abs-1111-0123}, the underlying logic of the Coq proof assistant is one such
 system.
 
 Earlier work \cite{DBLP:conf/itp/SozeauT14} on universe polymorphism
@@ -114,8 +114,8 @@ I~\vec{m}
 I'~\vec{m}
 }
 \end{mathpar}
-\footnote{The rule \ref{C-Ind} is slightly changed here so that it applies to
- template polymorphism explained below. }
+\footnotetext{The rule \ref{C-Ind} is slightly changed here so that it applies to
+ template polymorphism explained below.}%
 The two terms $I$ and $I'$ are two inductive definitions (type
 constructors\footnote{Not to be confused with constructors of
   inductive types}) with indexes with types $\vec{N}$ and $\vec{N'}$
@@ -143,20 +143,11 @@ we can derive
 \Coqe|Category$_{\mathtt{i, j}}$| $\preceq$ \Coqe|Category$_{\mathtt{i', j'}}$|
 whenever $\mathtt{i \le i'}$ and $\mathtt{j \le j'}$.
 
-\paragraph{Implementation}
-The rule \ref{C-Ind} above can be implemented in Coq very efficiently.
-The idea is that as soon as we define an inductive type, we compare
-two fresh instances of it (with two different sets of universe
-variables) to compute the set of constraints necessary for subtyping
-relation for different instances of that inductive type. Subsequent
-comparisons during type checking/inference will use these constraints.
-
-
 \def\vec#1{\overset{\rightarrow}{#1}}
 \def\clist{\texttt{list}}
 \def\nat{\texttt{nat}}
 \def\ulist#1{\texttt{list@\{}#1\texttt{\}}}
-\subsection*{Template Polymorphism}
+\paragraph{Template Polymorphism}
 
 Before the addition of full universe polymorphism to Coq, the system
 enjoyed a restricted form of polymorphism for inductive types, which was
@@ -186,20 +177,19 @@ cumulativity imposes no constraint on its universe variable. This change
 will allow a complete compatibility when moving inductive definitions
 from the template polymorphic treatment to the new one.
 
-\subsection*{Motivating examples}
+\paragraph{Motivating examples}
 The category theory library by Timany et
-al. \cite{DBLP:conf/rta/Timany016} the authors prove a theorem that
-states that any small and complete category is a preorder category.
-In loc. cit. (relative) smallness and largeness of constructions is
-represented through universe levels and therefore never explicitly
-mentioned.  Indeed universe constraints inferred by Coq for this
-theorem reflect the smallness criterion. This theorem would only apply
-to a category \Coqe|C : Category$_{\mathtt{i, j}}$| only if
-$\mathtt{j \le i}$. This means it would not apply to the category
-\Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types at level
-$\mathtt{i}$ (and functions between them) which is clearly complete 
-but not small.
-
+al. \cite{DBLP:conf/rta/Timany016} the authors prove a well-known
+theorem in Coq that states that any small and complete category is a
+preorder category.  In loc. cit. (relative) smallness and largeness of
+constructions is represented through universe levels and therefore
+never explicitly mentioned.  Indeed universe constraints inferred by
+Coq for this theorem reflect the smallness criterion. This theorem
+would only apply to a category \Coqe|C : Category$_{\mathtt{i, j}}$|
+only if $\mathtt{j \le i}$. This means it would not apply to the
+category \Coqe|Types@{i} : Category$_{\mathtt{i, i + 1}}$| of types at
+level $\mathtt{i}$ (and functions between them) which is clearly
+complete but not small.
 In a system with the rule \ref{C-Ind} the category of types is also
 \Coqe|Types@{i} : Category$_{\mathtt{k, l}}$| where $\mathtt{i < k}$,
 $\mathtt{i + 1 < l}$ and $\mathtt{l \le k}$. However, constraints
@@ -209,8 +199,7 @@ required. Intuitively, this is due to the fact that then
 \Coqe|Types@{i}| would require to have limits of all functors from
 possibly larger categories.
 
-
-\subsection*{Consistency and Strong Normalization}
+\paragraph{Consistency and Strong Normalization}
 The model constructed for pCIC by Lee et
 al. \cite{DBLP:journals/corr/abs-1111-0123} is a set theoretic model
 that for inductive types considers the (fixpoints of the function
@@ -225,7 +214,19 @@ described above.
 
 % - for SN, ???
 
-\setlength{\bibsep}{1pt} % or use whatever dimension you want
+\paragraph{Implementation}
+The rule \ref{C-Ind} above can be implemented in Coq very efficiently.
+The idea is that as soon as we define an inductive type, we compare
+two fresh instances of it (with two different sets of universe
+variables) to compute the set of constraints necessary for subtyping
+relation for different instances of that inductive type. Subsequent
+comparisons during type checking/inference will use these constraints.
+It is our plan to implement the use of this rule in Coq and
+accordingly eliminate the template polymorphism mechanism from Coq.
+These new features are planed to be part of the next major release of
+the Coq proof assistant (Coq 8.7).
+
+\setlength{\bibsep}{0pt} % or use whatever dimension you want
 \renewcommand{\bibfont}{\small} % or any other  appropriate font command
 \bibliographystyle{plain}
 \bibliography{bib}
