@@ -12,6 +12,11 @@
 % into the list defined using \institute
 %
 \author{
+Amin Timany\inst{1}
+\and
+Matthieu Sozeau\inst{2}
+\and
+Bart Jacobs\inst{1}
 % Serguei A. Mokhov\inst{1}\thanks{Designed and implemented the class style}
 % \and
 %     Geoff Sutcliffe\inst{2}\thanks{Did numerous tests and provided a lot of suggestions}
@@ -22,6 +27,9 @@
 
 % Institutes for affiliations are also joined by \and,
 \institute{
+imec-Distrinet, KU Leuven, Belgium
+\and
+irif, Inria Paris, France
 %   Concordia University,
 %   Montreal, Quebec, Canada\\
 %   \email{mokhov@cse.concordia.ca}
@@ -46,6 +54,7 @@
 % will be rejected by EasyChair
 
 \authorrunning{% Mokhov, Sutcliffe and Voronkov
+Timany, Sozeau, Jacobs
 }
 
 % \titlerunning{} has to be set to either the main title or its shorter
@@ -86,7 +95,7 @@ is only possible if $\mathtt{i = i'}$ and $\mathtt{j = j'}$.
 In previous work Timany et al. \cite{DBLP:conf/ictac/Timany015} extend
 pCIC to pCuIC (predicative Calculus of Cumulative Inductive
 Constructions). This is essentially the system pCIC with a single
-subtyping added to it:\footnotemark{}
+subtyping rule added to it:\footnotemark{}
 \begin{mathpar}
 \inferH{C-Ind}{
 I \equiv (\mathsf{Ind}
@@ -204,8 +213,7 @@ the model readily includes all elements of the inductive types
 including those added by the rule \ref{C-Ind}. Hence it is only
 natural to expect (and it is our conjecture that) the same model
 proves strong normalization for and thus the consistency of Coq when
-extended with the rule \ref{C-Ind} replacing template polymorphism is
-described above.
+extended with the rule \ref{C-Ind}.
 % - idea of the consistency proof using Werner \& Lee's model
 
 % - for SN, ???
@@ -217,10 +225,9 @@ two fresh instances of it (with two different sets of universe
 variables) to compute the set of constraints necessary for subtyping
 relation for different instances of that inductive type. Subsequent
 comparisons during type checking/inference will use these constraints.
-It is our plan to implement the rule \ref{C-Ind} in Coq and
-accordingly eliminate the template polymorphism mechanism.
-These new features are planed as part of the next major release of
-the Coq proof assistant (Coq 8.7).
+It is our plan to implement the rule \ref{C-Ind} for the next release
+of Coq (Coq 8.7) and accordingly eliminate the template polymorphism
+mechanism.
 
 \setlength{\bibsep}{0pt} % or use whatever dimension you want
 \renewcommand{\bibfont}{\small} % or any other  appropriate font command
