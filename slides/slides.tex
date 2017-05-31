@@ -51,7 +51,7 @@ Inria Paris \& IRIF, France
 \item In higher order dependent type theories:
 \begin{itemize}
 \item Types are also terms and hence have a type
-\item Type of all types, as it should be the type of itself, leads to paradoxes, like Girard's paradox in set theory
+\item Type of all types, as it should be the type of itself, leads to paradoxes, like Girard's paradox
 \item Thus, we have a countably infinite hierarchy of universes (types of types):
 \[
 \text{\Coqe|Type|}_0, \text{\Coqe|Type|}_1, \text{\Coqe|Type|}_2, \dots
@@ -100,7 +100,7 @@ k < i ~\text{ and }~ l < i
 \begin{itemize}
 \item For universe polymorphic inductive types, e.g., \Coqe|Category|, copies are considered
 \item With no cumulativity (subtyping), i.e.,
-\\ \Coqe|C : Category@{i j}| and \Coqe|C : Category@{k l}| implies $\mathtt{i = k} ~\text{ and }~\mathtt{j = l}$
+\\ \Coqe|Category@{i j} $\preceq$ Category@{k l}| implies $\mathtt{i = k} ~\text{ and }~\mathtt{j = l}$
 \pause
 \item This means \Coqe|Cat@{i j k l}| is the category of all categories at \Coqe|{k l}| and \emph{not lower}\only<2->{\;\footnote{There are however categories isomorphic to the categories in lower levels.}}
 \end{itemize}
@@ -140,10 +140,10 @@ Ar(s) ~\text{ is the set of types of the form: }~ \Pi \overset{\rightarrow}{x}: 
 Co(X) ~\text{ is the set of types of the form: }~ \Pi\overset{\rightarrow}{x} : \overset{\rightarrow}{M}.~X~\overset{\rightarrow}{m}
 \]
 \pause
-No Parameters (\Coqe|A| in \Coqe|vec A n|) are considered in this reule.
+No Parameters (\Coqe|A| in \Coqe|vec A n|) are considered in this rule.
 \begin{Coq}
-Inductive vec (A : Type) : nat -> Type := nil : vec A 0 
-  | cons : forall n, A -> vec A n -> vec A (S n).
+Inductive vec (T : Type) : nat -> Type := nil : vec T 0 
+  | cons : forall n, T -> vec T n -> vec T (S n).
 \end{Coq}
 \pause
 \item Some cumulativity rules in pCIC:
@@ -338,7 +338,7 @@ $\mathtt{i \le k}$ and $\mathtt{j \le l}$ $\Rightarrow$ \Coqe|Category@{i j}| $\
 \end{center}
 \item By \textsc{C-Ind}:
 \begin{center}
-\Coqe|list@{i}| $\preceq$ \Coqe|list@{j}| \pause \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
+\Coqe|list@{i} A| $\preceq$ \Coqe|list@{j} A| \pause \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
 \end{center}
 \pause
 \item In pCuIC we consider \emph{fully applied} inductive types $I~\vec{m}$ and $I'~\vec{m}$ convertible if they are mutually subtypes
@@ -371,6 +371,11 @@ This is implemented in Coq!
 \item Inductive types interpreted using least fixpoints of \textbf{monotone}\footnote{Due to strict positivity condition} functions
 \item This justifies both \textsc{C-Ind} and \textsc{Conv-Ind}
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\centering
+\Huge Thanks
 \end{frame}
 
 \end{document}
