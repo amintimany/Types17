@@ -1,0 +1,394 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+
+\usepackage{amsthm}
+\usepackage{tikz}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{lstcoq}
+\usepackage{mathpartir, pftools}
+\usepackage{stmaryrd}
+
+\usepackage{tikz-cd}
+
+\definecolor{DarkGreen}{rgb}{0.2578,0.50,0.16406}
+\definecolor{Sepia}{rgb}{0.3686,0.1490,0.0706}
+
+\tikzstyle{every picture}+=[remember picture]
+
+\newtheorem{conjecture}{Conjecture}
+
+\begin{document}
+
+\title{Cumulative Inductive Types in Coq}
+\author{
+\underline{Amin Timany}\inst{1}
+\and
+Matthieu Sozeau\inst{2}
+\and
+Bart Jacobs\inst{1}
+}
+\institute{
+imec-Distrinet, KU Leuven, Belgium
+\and
+Inria Paris \& IRIF, France
+}
+\date{September 18th, 2017 \\[1em] Aarhus university, Denmark}
+
+\setbeamertemplate{navigation symbols}{}
+
+\begin{frame}[t]
+\titlepage
+\end{frame}
+
+\setbeamertemplate{navigation symbols}{\insertframenumber}
+\setcounter{framenumber}{0}
+
+\section{Universe polymorphism and Inductive Types}
+
+\begin{frame}[t]
+\begin{itemize}
+\item In higher order dependent type theories:
+\begin{itemize}
+\item Types are also terms and hence have a type
+\item Type of all types, as it should be the type of itself, leads to paradoxes, like Girard's paradox
+\item Thus, we have a countably infinite hierarchy of universes (types of types):
+\[
+\text{\Coqe|Type|}_0, \text{\Coqe|Type|}_1, \text{\Coqe|Type|}_2, \dots
+\]
+where:
+\[
+\text{\Coqe|Type|}_0: \text{\Coqe|Type|}_1, \text{\Coqe|Type|}_1 : \text{\Coqe|Type|}_2, \dots
+\]
+\end{itemize}
+\pause
+\item Such a system is cumulative if for any type $T$ and $i$:
+\[
+T : \text{\Coqe|Type|}_i \Rightarrow T : \text{\Coqe|Type|}_{i+1}
+\]
+\item Example: Predicative Calculus of Inductive Constructions (pCIC), the logic of the proof assistant Coq
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item pCIC has recently been extended with universe polymorphism
+\begin{itemize}
+\item Definitions can be polymorphic in universe levels, e.g., categories:
+\begin{Coq}
+Record Category@{i j} : Type$$@{max(i+1, j+1)} :=
+  { $\color{MidnightBlue}\mathtt{Obj}$ : Type$$@{i};
+    $\color{MidnightBlue}\mathtt{Hom}$ : Obj -> Obj -> Type$$@{j}; $\dots$ }.
+\end{Coq}
+\pause
+\item To keep consistent, universe polymorphic definitions come with constraints, e.g., category of categories:
+\begin{Coq}
+Definition Cat@{i j k l} :=
+  {| $\color{MidnightBlue}\mathtt{Obj}$ := Category@{k l};
+     $\color{MidnightBlue}\mathtt{Hom}$ := fun C D => Functor@{k l k l} C D; $\dots$ |}
+  : Category@{i j}.
+\end{Coq}
+with constraints:
+\[
+k < i ~\text{ and }~ l < i
+\]
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item For universe polymorphic inductive types, e.g., \Coqe|Category|, copies are considered
+\item With no cumulativity (subtyping), i.e.,
+\\ \Coqe|Category@{i j} $\preceq$ Category@{k l}| implies $\mathtt{i = k} ~\text{ and }~\mathtt{j = l}$
+\pause
+\item This means \Coqe|Cat@{i j k l}| is the category of all categories at \Coqe|{k l}| and \emph{not lower}\only<2->{\;\footnote{There are however categories isomorphic to the categories in lower levels.}}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item Constraints on statements about universe polymorphic inductive definitions restrict to which copies they apply
+\item For \Coqe|Cat@{i j k l}| the fact that it has exponentials has constraints $\mathtt{j = k = l}$
+\pause
+\item In particular:
+\begin{Coq}
+Definition Type_Cat@{i j} :=
+  {| $\color{MidnightBlue}\mathtt{Obj}$ := Type$$@{j};
+     $\color{MidnightBlue}\mathtt{Hom}$ := fun A B => A -> B; $\dots$ |} : Category@{i j}.
+\end{Coq}
+with constraints: $j < i$
+\item It is \emph{not} an object of any copy of \Coqe|Cat| with exponentials!
+\pause
+\item Yoneda embedding can't be simply defined as the exponential transpose of the $hom$ functor
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item Inductive typs in pCIC:
+\begin{mathpar}
+\inferH{Ind}{
+A \in Ar(s) \and \Gamma \vdash A: s' \and
+\Gamma, X: A \vdash C_i: s \and C_i \in Co(X)}
+{\Gamma \vdash \mathsf{Ind}(X: A)\{C_1,\dots,C_n\}: A}
+\end{mathpar}
+\[
+Ar(s) ~\text{ is the set of types of the form: }~ \Pi \overset{\rightarrow}{x}: \overset{\rightarrow}{M}.~s
+\]
+\[
+Co(X) ~\text{ is the set of types of the form: }~ \Pi\overset{\rightarrow}{x} : \overset{\rightarrow}{M}.~X~\overset{\rightarrow}{m}
+\]
+\pause
+No Parameters (\Coqe|T| in \Coqe|vec T n|) are considered in this rule.
+\begin{Coq}
+Inductive vec (T : Type) : nat -> Type := nil : vec T 0 
+  | cons : forall n, T -> vec T n -> vec T (S n).
+\end{Coq}
+\pause
+\item Some cumulativity rules in pCIC:
+\begin{mathpar}
+\inferH{Conv}{
+\Gamma \vdash t: A \and \Gamma \vdash B: s \and A \preceq B}
+{\Gamma \vdash t: B}
+\end{mathpar}
+\begin{mathpar}
+\inferH{C-Type}{i \le j}
+{{\color{red}\mathtt{Type}}_i \preceq {\color{red}\mathtt{Type}}_j}
+\and
+\inferH{C-Prod}{A \simeq A' \and B \preceq B'}{\Pi x : A.~B \preceq \Pi x: A'.~B'}
+\end{mathpar}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item Predicative Calculus of Cumulative Inductive Types (pCuIC):
+{\small
+\only<1, 6->{
+\begin{mathpar}
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
+\and
+\forall i.~ N_i \preceq {N'}_i
+\and
+\forall i,j.~ (M_i)_j \preceq (M_i')_j \\\
+\and
+length(\vec{m}) = length(\vec{x})
+\and
+\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}
+}{
+I~\vec{m}
+\preceq
+I'~\vec{m}
+}
+\end{mathpar}
+}
+\only<2>{
+\begin{mathpar}
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
+\and
+\colorbox{SeaGreen}{$\forall i.~ N_i \preceq {N'}_i$}
+\and
+\forall i,j.~ (M_i)_j \preceq (M_i')_j \\\
+\and
+length(\vec{m}) = length(\vec{x})
+\and
+\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}
+}{
+I~\vec{m}
+\preceq
+I'~\vec{m}
+}
+\end{mathpar}
+}
+\only<3>{
+\begin{mathpar}
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
+\and
+\forall i.~ N_i \preceq {N'}_i
+\and
+\colorbox{SeaGreen}{$\forall i,j.~ (M_i)_j \preceq (M_i')_j$} \\\
+\and
+length(\vec{m}) = length(\vec{x})
+\and
+\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}
+}{
+I~\vec{m}
+\preceq
+I'~\vec{m}
+}
+\end{mathpar}
+}
+\only<4>{
+\begin{mathpar}
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
+\and
+\forall i.~ N_i \preceq {N'}_i
+\and
+\forall i,j.~ (M_i)_j \preceq (M_i')_j \\\
+\and
+length(\vec{m}) = length(\vec{x})
+\and
+\colorbox{SeaGreen}{$\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}$}
+}{
+I~\vec{m}
+\preceq
+I'~\vec{m}
+}
+\end{mathpar}
+}
+\only<5>{
+\begin{mathpar}
+\inferH{C-Ind}{
+I \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N}.~s)\{
+\Pi\vec{x_1} : \vec{M_1}.
+~X~\vec{m_1},\dots,\Pi \vec{x_n} :
+\vec{M_n}.~X~\vec{m_n}\})\\\
+\and
+I' \equiv (\mathsf{Ind}
+(X : \Pi \vec{x} : \vec{N'}.~s')\{
+\Pi \vec{x_1} : \vec{M_1'}.~
+X~\vec{m_1'},\dots,\Pi \vec{x_n} :
+\vec{M_n'}.~X~\vec{m_n'}\})\\\
+\and
+\forall i.~ N_i \preceq {N'}_i
+\and
+\forall i,j.~ (M_i)_j \preceq (M_i')_j \\\
+\and
+\colorbox{SeaGreen}{$length(\vec{m}) = length(\vec{x})$}
+\and
+\forall i.~X~\vec{m_i} \simeq X~ \vec{m_i'}
+}{
+I~\vec{m}
+\preceq
+I'~\vec{m}
+}
+\end{mathpar}
+}
+}
+\pause
+\pause
+\pause
+\pause
+\pause
+\pause
+\item Example:
+\begin{center}
+\Coqe|Category@{i j}| $\equiv \mathsf{Ind}(X: \text{\Coqe|Type|}_{max(i+1,j+1)})\{\Pi o: \text{\Coqe|Type|}_i.\Pi h: o \to o \to \text{\Coqe|Type|}_j.\cdots\}$
+\end{center}
+\item By \textsc{C-Ind}:
+\begin{center}
+$\mathtt{i \le k}$ and $\mathtt{j \le l}$ $\Rightarrow$ \Coqe|Category@{i j}| $\preceq$ \Coqe|Category@{k l}|
+\end{center}
+\pause
+\item Notice \textsc{C-Ind} does not consider parameters or sort of the inductive type
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{itemize}
+\item For \Coqe|Cat@{i j k l}| with exponentials we had the constraints: $\mathtt{j = k = l}$
+
+\item \Coqe|Type_Cat@{i' j'}| we had the constraint: $j' < i'$
+
+\item Now \Coqe|Type_Cat@{i' j'} : Obj Cat@{i j k l}| just imposes the constraint:
+$\mathtt{i' \le k \land j' \le l}$
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t, fragile]
+\begin{itemize}
+\item Example:
+\begin{center}
+\Coqe|list@{i} (A : Type$_i$)| $\equiv \mathsf{Ind}(X: \text{\Coqe|Type|$_{i}$})\{X, A \to X \to X\}$
+\end{center}
+\item By \textsc{C-Ind}:
+\begin{center}
+\Coqe|list@{i} A| $\preceq$ \Coqe|list@{j} A| \pause \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
+\end{center}
+\pause
+\item In pCuIC we consider \emph{fully applied} inductive types $I~\vec{m}$ and $I'~\vec{m}$ convertible if they are mutually subtypes
+\begin{mathpar}
+\inferH{Conv-Ind}{I~\vec{m} \preceq I'~\vec{m} \and I'~\vec{m} \preceq I~\vec{m}}{I~\vec{m} \simeq I'~\vec{m}}
+\end{mathpar}
+\pause
+\item Examples:
+\begin{center}
+$\mathtt{i = k}$ and $\mathtt{j = l}$ $\Rightarrow$ \Coqe|Category@{i j}| $\simeq$ \Coqe|Category@{k l}|
+\end{center}
+\begin{center}
+\Coqe|list@{i} A| $\simeq$ \Coqe|list@{j} A| \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
+\end{center}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Demo}
+\begin{center}
+This is implemented in Coq!
+\end{center}
+\end{frame}
+
+\newcommand{\sem}[1]{\llbracket #1 \rrbracket}
+
+\begin{frame}[t]{Theoretical justification}
+\begin{itemize}
+\item We construct a set theoretic model for pCuIC $\sem{\cdot}: \mathit{Terms}_\mathit{pCuIC} \to ZFC$\footnote{ZFC with suitable axioms, e.g., inaccessible cardinals, to model pCuIC universes}
+\item For subtyping $A \preceq B$ we have $\sem{A} \subseteq \sem{B}$
+\item Inductive types interpreted using least fixpoints of \textbf{monotone}\footnote{Due to strict positivity condition} functions
+\item This justifies both \textsc{C-Ind} and \textsc{Conv-Ind}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\centering
+\Huge Thanks
+\end{frame}
+
+\end{document}
+
