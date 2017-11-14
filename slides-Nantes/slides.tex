@@ -8,8 +8,10 @@
 \usepackage{lstcoq}
 \usepackage{mathpartir, pftools}
 \usepackage{stmaryrd}
-
+\usepackage{utf}
 \usepackage{tikz-cd}
+
+\pgfdeclareimage[height=3cm]{coq-biglogo}{barron-logo}
 
 \definecolor{DarkGreen}{rgb}{0.2578,0.50,0.16406}
 \definecolor{Sepia}{rgb}{0.3686,0.1490,0.0706}
@@ -25,15 +27,13 @@
 Amin Timany\inst{1}
 \and
 \underline{Matthieu Sozeau}\inst{2}
-\and
-Bart Jacobs\inst{1}
 }
 \institute{
-imec-Distrinet, KU Leuven, Belgium
+\inst{1}imec-Distrinet, KU Leuven, Belgium
 \and
-Inria Paris \& IRIF, France
+\inst{2}Inria Paris \& IRIF, France
 }
-\date{November 14th, 2017 \\[1em] Géocal-Lac Days, Nantes, France}
+\date{November 14th, 2017 \\[1em] Géocal-LAC Days, Nantes, France}
 
 \setbeamertemplate{navigation symbols}{}
 
@@ -47,6 +47,7 @@ Inria Paris \& IRIF, France
 \section{Universe polymorphism and Inductive Types}
 
 \begin{frame}[t]
+  \frametitle{Universe hierarchy}
 \begin{itemize}
 \item In higher order dependent type theories:
 \begin{itemize}
@@ -69,8 +70,23 @@ T : \text{\Coqe|Type|}_i \Rightarrow T : \text{\Coqe|Type|}_{i+1}
 \item Example: Predicative Calculus of Inductive Constructions (pCIC), the logic of the proof assistant Coq
 \end{itemize}
 \end{frame}
+\begin{frame}[t, fragile]
+  \frametitle{Universe cumulativity in pCIC}
+\begin{mathpar}
+\inferH{}{
+\Gamma \vdash t: A \and \Gamma \vdash B: s \and A \preceq B}
+{\Gamma \vdash t: B}
+\end{mathpar}
+\begin{mathpar}
+\inferH{}{i \le j}
+{{\color{red}\mathtt{Type}}_i \preceq {\color{red}\mathtt{Type}}_j}
+\and
+\inferH{}{A \simeq A' \and B \preceq B'}{\Pi x : A.~B \preceq \Pi x: A'.~B'}
+\end{mathpar}
+\end{frame}
 
 \begin{frame}[t, fragile]
+  \frametitle{Universe polymorphism}
 \begin{itemize}
 \item pCIC has recently been extended with universe polymorphism
 \begin{itemize}
@@ -81,7 +97,7 @@ Record Category@{i j} : Type$$@{max(i+1, j+1)} :=
     $\color{MidnightBlue}\mathtt{Hom}$ : Obj -> Obj -> Type$$@{j}; $\dots$ }.
 \end{Coq}
 \pause
-\item To keep consistent, universe polymorphic definitions come with constraints, e.g., category of categories:
+\item To keep consistency, universe polymorphic definitions come with constraints, e.g., category of categories:
 \begin{Coq}
 Definition Cat@{i j k l} :=
   {| $\color{MidnightBlue}\mathtt{Obj}$ := Category@{k l};
@@ -97,19 +113,29 @@ k < i ~\text{ and }~ l < i
 \end{frame}
 
 \begin{frame}[t, fragile]
-\begin{itemize}
-\item For universe polymorphic inductive types, e.g., \Coqe|Category|, copies are considered
+  \frametitle{Justifying universe polymorphism}
+  \begin{itemize}
+\item For universe polymorphic inductive types and constants, e.g., \Coqe|Category|,
+  copies are considered (Sozeau \& Tabareau, ITP'14).
+\item Direct translation from pCIC to CIC + floating universe
+  constraints, itself translatable to CIC with fixed universes.
 \item With no cumulativity (subtyping), i.e.,
-\\ \Coqe|Category@{i j} $\preceq$ Category@{k l}| implies $\mathtt{i = k} ~\text{ and }~\mathtt{j = l}$
+\\ \Coqe|Category@{i j} $\preceq$ Category@{k l}| iff $\mathtt{i = k} ~\text{ and }~\mathtt{j = l}$
 \pause
 \item This means \Coqe|Cat@{i j k l}| is the category of all categories at \Coqe|{k l}| and \emph{not lower}\only<2->{\;\footnote{There are however categories isomorphic to the categories in lower levels.}}
 \end{itemize}
 \end{frame}
 
 \begin{frame}[t, fragile]
-\begin{itemize}
-\item Constraints on statements about universe polymorphic inductive definitions restrict to which copies they apply
-\item For \Coqe|Cat@{i j k l}| the fact that it has exponentials has constraints $\mathtt{j = k = l}$
+  \frametitle{Relative size constraints}
+  \begin{itemize}
+\item Constraints on statements about universe polymorphic inductive definitions restrict to which copies they apply.
+\item For the category of categories \Coqe|Cat@{i j k l}| the fact that
+  it has exponentials has constraints $\mathtt{j = k = l}$:
+
+  universe of objects $\mathtt{k}$ =
+  universe of morphisms $\mathtt{l}$ =
+  universe of functors between $\mathtt{k~l}$ categories.
 \pause
 \item In particular:
 \begin{Coq}
@@ -117,16 +143,14 @@ Definition Type_Cat@{i j} :=
   {| $\color{MidnightBlue}\mathtt{Obj}$ := Type$$@{j};
      $\color{MidnightBlue}\mathtt{Hom}$ := fun A B => A -> B; $\dots$ |} : Category@{i j}.
 \end{Coq}
-with constraints: $j < i$
-\item It is \emph{not} an object of any copy of \Coqe|Cat| with exponentials!
+with constraints: $j < i$ is \alert{not} an object of any copy of \Coqe|Cat| with exponentials!
 \pause
 \item Yoneda embedding can't be simply defined as the exponential transpose of the $hom$ functor
 \end{itemize}
 \end{frame}
 
 \begin{frame}[t, fragile]
-\begin{itemize}
-\item Inductive typs in pCIC:
+  \frametitle{Inductive types in pCIC}
 \begin{mathpar}
 \inferH{Ind}{
 A \in Ar(s) \and \Gamma \vdash A: s' \and
@@ -146,24 +170,10 @@ Inductive vec (T : Type) : nat -> Type := nil : vec T 0
   | cons : forall n, T -> vec T n -> vec T (S n).
 \end{Coq}
 \pause
-\item Some cumulativity rules in pCIC:
-\begin{mathpar}
-\inferH{Conv}{
-\Gamma \vdash t: A \and \Gamma \vdash B: s \and A \preceq B}
-{\Gamma \vdash t: B}
-\end{mathpar}
-\begin{mathpar}
-\inferH{C-Type}{i \le j}
-{{\color{red}\mathtt{Type}}_i \preceq {\color{red}\mathtt{Type}}_j}
-\and
-\inferH{C-Prod}{A \simeq A' \and B \preceq B'}{\Pi x : A.~B \preceq \Pi x: A'.~B'}
-\end{mathpar}
-\end{itemize}
 \end{frame}
 
 \begin{frame}[t, fragile]
-\begin{itemize}
-\item Predicative Calculus of Cumulative Inductive Types (pCuIC):
+\frametitle{Predicative Calculus of \alert{Cumulative} Inductive Types (pCuIC)}
 {\small
 \only<1, 6->{
 \begin{mathpar}
@@ -317,6 +327,7 @@ I'~\vec{m}
 \pause
 \pause
 \pause
+\begin{itemize}
 \item Example:
 \begin{center}
 \Coqe|Category@{i j}| $\equiv \mathsf{Ind}(X: \text{\Coqe|Type|}_{max(i+1,j+1)})\{\Pi o: \text{\Coqe|Type|}_i.\Pi h: o \to o \to \text{\Coqe|Type|}_j.\cdots\}$
@@ -331,23 +342,25 @@ $\mathtt{i \le k}$ and $\mathtt{j \le l}$ $\Rightarrow$ \Coqe|Category@{i j}| $\
 \end{frame}
 
 \begin{frame}[fragile]
-\begin{itemize}
+  \frametitle{Back to categories}
+  \begin{itemize}
+
 \item For \Coqe|Cat@{i j k l}| with exponentials we had the constraints: $\mathtt{j = k = l}$
 
 \item \Coqe|Type_Cat@{i' j'}| we had the constraint: $j' < i'$
 
 \item Now \Coqe|Type_Cat@{i' j'} : Obj Cat@{i j k l}| just imposes the constraint:
-$\mathtt{i' \le k \land j' \le l}$
+$\mathtt{i' \le k \land j' \le l}$, which is consistent.
 
 \end{itemize}
 \end{frame}
 
 \begin{frame}[t, fragile]
-\begin{itemize}
-\item Example:
+  \frametitle{Data structures and ``template polymorphism''}
 \begin{center}
 \Coqe|list@{i} (A : Type$_i$)| $\equiv \mathsf{Ind}(X: \text{\Coqe|Type|$_{i}$})\{X, A \to X \to X\}$
 \end{center}
+\begin{itemize}
 \item By \textsc{C-Ind}:
 \begin{center}
 \Coqe|list@{i} A| $\preceq$ \Coqe|list@{j} A| \pause \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
@@ -358,39 +371,55 @@ $\mathtt{i' \le k \land j' \le l}$
 \inferH{Conv-Ind}{I~\vec{m} \preceq I'~\vec{m} \and I'~\vec{m} \preceq I~\vec{m}}{I~\vec{m} \simeq I'~\vec{m}}
 \end{mathpar}
 \pause
-\item Examples:
-\begin{center}
+\item
 $\mathtt{i = k}$ and $\mathtt{j = l}$ $\Rightarrow$ \Coqe|Category@{i j}| $\simeq$ \Coqe|Category@{k l}|
-\end{center}
-\begin{center}
+\item
 \Coqe|list@{i} A| $\simeq$ \Coqe|list@{j} A| \hspace{1em} (\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$})
-\end{center}
-\begin{center}
+\item
 \Coqe|nil@{i} A| $\simeq$ \Coqe|nil@{j} A| \hspace{1em}
-(\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$} as well) properly
-models ``template-polymorphism''.
-\end{center}
+(\textbf{regardless of $\mathtt{i}$ and $\mathtt{j}$} as well)
+\item Properly models ``template-polymorphism'', which allows
+  ``transparent'' copies of inductives (e.g. \Coqe{list nat : Set} while
+  \Coqe|list Type|$_{i}$\Coqe|: Type|$_{i+1}$).
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Demo}
 \begin{center}
-This is implemented in Coq!
+  This is implemented in Coq 8.7!
+  \vspace{2em}
+
+  \pgfuseimage{coq-biglogo}
+
+  \vspace{2em}
+  Thanks to Pierre-Marie P\'edrot and Ga\"etan Gilbert for many improvements
+  on the universe system as well.
+
 \end{center}
 \end{frame}
 
 \newcommand{\sem}[1]{\llbracket #1 \rrbracket}
 
 \begin{frame}[t]{Theoretical justification}
-\begin{itemize}
-\item We construct a set theoretic model for pCuIC $\sem{\cdot}: \mathit{Terms}_\mathit{pCuIC} \to ZFC$\footnote{ZFC with suitable axioms, e.g., inaccessible cardinals, to model pCuIC universes}
-\item For subtyping $A \preceq B$ we have $\sem{A} \subseteq \sem{B}$
-\item Inductive types interpreted using least fixpoints of \textbf{monotone}\footnote{Due to strict positivity condition} functions
-\item This justifies both \textsc{C-Ind} and \textsc{Conv-Ind}
-\end{itemize}
+We construct a set theoretic model for pCuIC
+  $\sem{\cdot}: \mathit{Terms}_\mathit{pCuIC} \to ZFC$: ZFC with
+  suitable axioms, e.g., inaccessible cardinals, to model pCuIC
+  universes.
+
+  \begin{itemize}
+  \item Based on a modification of Werner \& Lee's model which
+    assumed Strong Normalization.
+  \item For subtyping $A \preceq B$ we have $\sem{A} \subseteq \sem{B}$
+  \item Inductive types interpreted using least fixpoints of
+    \textbf{monotone}\footnote{Due to strict positivity condition}
+    functions, eliminators instead of match+fix+guard condition.
+  \item This justifies both \textsc{C-Ind} and \textsc{Conv-Ind} and
+    even conversion of constructors applied to parameters.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
+  \frametitle{The End}
 \centering
 \Huge Thanks
 \end{frame}
